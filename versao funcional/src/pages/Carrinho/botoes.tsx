@@ -6,19 +6,27 @@ import {useParams} from 'react-router-dom'
 import axios from 'axios'
 import { BsFillTrashFill } from 'react-icons/bs'
 import { Link } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast'
 
 interface Store {
     carrinho: number
   }
 const Botoes = () => {
 
-    const [teste, setTest] = useState <Boolean> (true)
+
 
     const  [produtos, setProdutos] = useState<any>([])
 
   useEffect(() =>{
-      axios.get(`http://localhost:4000/beers/${params.id}`).then(resposta => setProdutos(resposta.data))
-  
+    async function getBebidas(){
+      try{
+        const produtos = await axios.get(`http://localhost:4000/beers/${params.id}`)
+        setProdutos(produtos.data)
+      } catch(erro){
+        if(erro) {
+          toast.error('Não foi possível carregar o produto no carrinho')}
+      }}
+      getBebidas()
   }, [])
   
   const params = useParams<any>()
@@ -33,6 +41,7 @@ const Botoes = () => {
     return (
         <div className="bg-carrinho">
             <div className="card">
+            <Toaster />
             <Link to="/Home" style={{ textDecoration: 'none' }}><h2 className="comprar" onClick={alerta}>Meu carrinho&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<AiOutlineArrowRight /></h2></Link>
                 <hr />
                 <div className="div-flex">

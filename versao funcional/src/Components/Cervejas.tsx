@@ -3,6 +3,7 @@ import { Beers } from '../types/beers'
 import  { useEffect, useState } from 'react';
 import { TiShoppingCart } from 'react-icons/ti'
 import { Link } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 
@@ -17,13 +18,23 @@ const Cervejas = () =>{
       const headers = {
         'Authorization': `Bearer ${token}`
       }
-      axios.get("http://localhost:4000/beers", { headers: headers })
-        .then(resposta => setBeers(resposta.data))
-  
+      async function getBebidas(){
+        try{
+        const beers = await axios.get("http://localhost:4000/beers", { headers: headers })
+        setBeers(beers.data)
+      } catch(erro){
+        if(erro.response.status === 404) {
+          toast.error('Não foi possível carregar as cervejas')}
+      }
+      
+      }
+      
+      getBebidas()
     }, [])
     return(
       
         <div>
+          <Toaster />
         <h3>Destaques da Empório</h3>
         <div className="div-flex2">
         {beers.map((item: Beers) => (

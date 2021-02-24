@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router-dom'
 import '../../index.css'
 import logo2 from '../../images/logo2.png'
+import toast, { Toaster } from 'react-hot-toast';
 
 const Entrar = () =>{
     const nomeInput = useRef<HTMLInputElement>(null) 
@@ -13,7 +14,7 @@ const Entrar = () =>{
     const [logado, setLogado] = useState(false)
 
 
-const cadastrar= () => {
+const cadastrar= async() => {
   
 
   const requisicao ={
@@ -24,18 +25,29 @@ const cadastrar= () => {
   }
   
 if (Number(idadeInput.current?.value )>= 18){
-  axios.post('http://localhost:4000/register', requisicao)
-  .then (resposta => localStorage.setItem("token", resposta.data.acessToken))
+  toast.success('Cadastrado com sucesso!')
+  try{
+  const logado = await axios.post('http://localhost:4000/register', requisicao)
+  setLogado (logado.data)
   setLogado(true)
+  
+}catch(erro){
+    if(erro) {
+      toast.error('Não foi possível logar, erro na requisição')
+     }
+  }
 }else{
-  alert("Você é menor de idade")
+  toast.error('Você é menor de idade')
 }
 }
 
 
 return (
+  
   <div className="container">
+    <Toaster />
   <div className="App">
+  
     <img src={logo2}/><br/>
     <input className="input1" type="text" placeholder="Nome" ref={nomeInput}/><br/>
     <input className="input2" type="number" placeholder="Idade" ref={idadeInput}/><br/>
